@@ -3,4 +3,6 @@ dist
 
 .env
 
+package-lock.json
+
 /generated/prisma
