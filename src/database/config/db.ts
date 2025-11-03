@@ -8,14 +8,14 @@ const db_username = String(process.env.DB_USERNAME || "")
 const db_password = String(process.env.DB_PASSWORD || "")
 const db_name = String(process.env.DB_NAME || "")
 
-const sequelize = new Sequelize(db_name, db_username, db_password, {
+export const sequelizeInstance = new Sequelize(db_name, db_username, db_password, {
     host: db_host,
-    dialect: "postgres"
+    dialect: "postgres",
 })
 
 const connectDB = async () => {
     try {
-        await sequelize.authenticate();
+        await sequelizeInstance.authenticate();
         console.log("DB Connected!")
     } catch (error) {
         console.error("Unnable to connect to the database", error)
