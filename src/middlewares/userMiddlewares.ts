@@ -34,3 +34,19 @@ export const isUserExists = async (req: ExtendedRequest, res: Response, next: Ne
         return sendError(res, error.message)
     }
 }
+
+export const isUserExistsByUserId = async (req: ExtendedRequest, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        const user = await userRepositories.findUserByAttribute("id", req.body.userId);
+
+        if (!user) {
+            return sendError(res, "User doesn't exists", 404)
+        }
+
+        req.user = user
+        return next()
+
+    } catch (error: any) {
+        return sendError(res, error.message)
+    }
+}

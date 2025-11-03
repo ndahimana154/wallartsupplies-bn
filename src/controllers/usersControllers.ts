@@ -2,7 +2,9 @@ import { Response } from "express";
 import { ExtendedRequest, ApiResponse } from "../types/Request";
 import userRepositories from "../repositories/userRepositories";
 import { sendError, sendSuccess } from "../helpers/apiResponse";
-import { comparePassword, generateToken, hashPassword } from "../helpers/authHelpers";
+import { comparePassword, generateToken, hashPassword, verifyToken } from "../helpers/authHelpers";
+import authEmails from "../services/emails/authEmails";
+import Session from "../database/models/Session";
 
 const createUserAccount = async (
     req: ExtendedRequest,
@@ -41,8 +43,64 @@ const userLogin = async (req: ExtendedRequest, res: Response): Promise<any> => {
     }
 }
 
+const forgotPassword = async (req: ExtendedRequest, res: Response): Promise<any> => {
+    try {
+        const token = await generateToken(String(req?.user?.email));
+        await userRepositories.saveSession({ userId: Number(req?.user?.id), token });
+        await authEmails.sendForgotPasswordEmail(String(req?.user?.email), Number(req?.user?.id), token)
+
+        return sendSuccess(res, "We have sent the next steps to your email inbox", 200);
+    } catch (error: any) {
+        return sendError(res, error.message)
+    }
+}
+
+const verifyResetPasswordToken = async (req: ExtendedRequest, res: Response): Promise<any> => {
+    try {
+        const session = await userRepositories.findSessionBy2Attribute("userId", req.body.userId, "token", req.body.token);
+        const isToken = await verifyToken(req.body.token)
+        // console.log("session", session)
+
+        if (!session || !isToken) {
+            return sendError(res, "Invalid or expired token");
+        }
+
+        return sendSuccess(res, "Token is valid");
+
+    } catch (error: any) {
+        return sendError(res, error.message)
+    }
+}
+
+const resetPassword = async (req: ExtendedRequest, res: Response) => {
+    try {
+        const { userId, token, password } = req.body;
+
+        const session = await userRepositories.findSessionBy2Attribute("userId", userId, "token", token);
+        const isTokenValid = await verifyToken(token);
+
+        console.log("SS", session?.dataValues?.id);
+
+        if (!session || !isTokenValid) {
+            return sendError(res, "Invalid or expired token", 400);
+        }
+
+        const hashedPassword = await hashPassword(password);
+
+        const updatedUser = await userRepositories.updateUser(Number(userId), { password: hashedPassword });
+
+        await userRepositories.deleteSession(Number(session.id));
+
+        return sendSuccess(res, "User password reset successfully", updatedUser);
+    } catch (error: any) {
+        return sendError(res, error.message);
+    }
+};
 
 export default {
     createUserAccount,
-    userLogin
+    userLogin,
+    forgotPassword,
+    verifyResetPasswordToken,
+    resetPassword
 }

@@ -1,5 +1,6 @@
 import Session, { SessionAttributes } from "../database/models/Session";
 import User, { UserAttributes } from "../database/models/Users";
+import { UpdateUserData } from "../types/UserTypes";
 
 const saveNewUser = async (data: UserAttributes) => {
     const user = await User.create(data);
@@ -20,8 +21,31 @@ const saveSession = async (data: SessionAttributes) => {
     return session
 }
 
+const findSessionBy2Attribute = async (key1: string, value1: string, key2: string, value2: string) => {
+    const session = await Session.findOne({
+        where: {
+            [key1]: value1,
+            [key2]: value2
+        }
+    })
+    return session
+}
+
+const updateUser = async (id: number, data: UpdateUserData) => {
+    const user = await User.update(data, { where: { id } })
+    return user
+}
+
+const deleteSession = async (id: number) => {
+    const deleted = await Session.destroy({ where: { id } })
+    return deleted;
+}
+
 export default {
     saveNewUser,
     findUserByAttribute,
-    saveSession
+    saveSession,
+    findSessionBy2Attribute,
+    updateUser,
+    deleteSession
 }

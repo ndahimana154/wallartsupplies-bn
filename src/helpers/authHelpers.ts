@@ -17,3 +17,7 @@ export const comparePassword = async (plain: string, hash: string) => {
 export const generateToken = async (payload: string) => {
     return jwt.sign(payload, JWT_SECRET)
 }
+
+export const verifyToken = async (payload: string) => {
+    return jwt.verify(payload, JWT_SECRET)
+}
