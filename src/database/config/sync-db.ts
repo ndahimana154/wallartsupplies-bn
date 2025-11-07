@@ -1,21 +1,16 @@
-import fs from "fs";
-import path from "path";
-
-const modelsPath = path.join(__dirname, "../models");
-
-fs.readdirSync(modelsPath)
-    .filter(file => file.endsWith(".ts") || file.endsWith(".js"))
-    .forEach(file => {
-        require(path.join(modelsPath, file));
-    });
-
+import { Categories, Products, Session, User } from "../models";
 import connectDB, { sequelizeInstance } from "./db";
 
 async function syncDatabase() {
     try {
-        await connectDB()
+        await connectDB();
+        console.log("Database connection established successfully!");
 
-        await sequelizeInstance.sync({ force: true });
+        await User.sync({ force: true });
+        await Categories.sync({ force: true });
+        await Products.sync({ force: true });
+        await Session.sync({ force: true });
+
         console.log("All models synchronized successfully!");
 
         process.exit(0);
