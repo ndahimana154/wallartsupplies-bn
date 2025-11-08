@@ -2,7 +2,7 @@ import { Op } from "sequelize";
 import { Categories } from "../database/models";
 import { CategoriesAttributes } from "../database/models/Categories";
 import Products, { ProductsAttributes } from "../database/models/Products";
-import { CategoryFilters, QueryOptions } from "../types/ProductTypes";
+import { CategoryFilters, ProductFilters, QueryOptions } from "../types/ProductTypes";
 
 const saveProduct = async (data: ProductsAttributes) => {
     const product = await Products.create(data);
@@ -29,6 +29,65 @@ const findAllProducts = async () => {
         }]
     });
     return products
+};
+
+const findCustomerProducts = async (filters: ProductFilters = {}, queries: QueryOptions = {}) => {
+    const { name, status = true, description } = filters;
+    const { page = 1, limit = 10, sortBy = "createdAt", order = "DESC" } = queries
+
+    const where: any = {}
+
+    if (name) {
+        where.name = { [Op.like]: `%${name}%` }
+    }
+    if (status) {
+        where.status = status
+    }
+    if (description) {
+        where.name = { [Op.like]: `%${description}%` }
+    }
+
+    const offset = (page - 1) * limit
+
+    const { count, rows } = await Products.findAndCountAll({
+        where,
+        limit,
+        offset,
+        order: [[sortBy, order]],
+        include: [{
+            model: Categories,
+            as: "category",
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            }
+        }]
+    });
+
+    return {
+        data: rows,
+        pagination: {
+            total: count,
+            page, limit, totalPages: Math.ceil(count / limit)
+        }
+    }
+};
+
+const customerFindSingleProductByAttribute = async (key: string, value: string) => {
+    const product = await Products.findOne({
+        where: {
+            [key]: value,
+            status: true
+        },
+        include: [{
+            model: Categories,
+            as: "category",
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            }
+        }]
+    })
+
+    return product
 };
 
 const findCategoriesByAttribute = async (key: string, value: string) => {
@@ -88,5 +147,7 @@ export default {
     findAllProducts,
     findCategoriesByAttribute,
     saveCategory,
-    findCategories
+    findCategories,
+    findCustomerProducts,
+    customerFindSingleProductByAttribute
 }

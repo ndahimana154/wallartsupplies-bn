@@ -12,3 +12,10 @@ export interface QueryOptions {
     sortBy?: string;
     order?: "ASC" | "DESC";
 }
+
+
+export interface ProductFilters {
+    name?: string;
+    status?: boolean;
+    description?: string;
+}

@@ -28,7 +28,24 @@ const getProductsList = async (req: ExtendedRequest, res: Response): Promise<any
     }
 }
 
+const getRecentCollections = async (req: ExtendedRequest, res: Response): Promise<any> => {
+    try {
+        const products = await productRepositories.findCustomerProducts();
+        return sendSuccess(res, "Products retrieved successfully", products)
+    } catch (error: any) {
+        return sendError(res, error.message)
+    }
+}
 
+const customerGetSingleProduct = async (req: ExtendedRequest, res: Response): Promise<any> => {
+    try {
+        const slug = req.params.slug
+        const product = await productRepositories.customerFindSingleProductByAttribute("slug", slug);
+        return sendSuccess(res, "Product retrieved successfully", product)
+    } catch (error: any) {
+        return sendError(res, error.message)
+    }
+}
 
 
 const createNewCategory = async (req: ExtendedRequest, res: Response): Promise<any> => {
@@ -57,5 +74,7 @@ export default {
     createNewProduct,
     createNewCategory,
     getCategories,
-    getProductsList
+    getProductsList,
+    getRecentCollections,
+    customerGetSingleProduct
 }

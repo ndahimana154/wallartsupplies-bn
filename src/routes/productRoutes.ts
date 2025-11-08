@@ -9,6 +9,9 @@ const productsRoutes = express.Router()
 productsRoutes.post("/new", bodyValidation(newProductValidations), isProductAlreadyExists, productsControllers.createNewProduct);
 productsRoutes.get("/list-all-products", productsControllers.getProductsList);
 
+productsRoutes.get("/customer-get-recent-collections", productsControllers.getRecentCollections);
+productsRoutes.get("/customer-get-product/:slug", productsControllers.customerGetSingleProduct);
+
 productsRoutes.post("/category/new", bodyValidation(newCategoryValidations), isCategoryAlreadyExists, productsControllers.createNewCategory);
 productsRoutes.get("/category/list", productsControllers.getCategories);
 
