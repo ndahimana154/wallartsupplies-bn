@@ -1,10 +1,9 @@
 import { Response } from "express";
-import { ExtendedRequest, ApiResponse } from "../types/Request";
+import { ExtendedRequest } from "../types/Request";
 import userRepositories from "../repositories/userRepositories";
 import { sendError, sendSuccess } from "../helpers/apiResponse";
 import { comparePassword, generateToken, hashPassword, verifyToken } from "../helpers/authHelpers";
 import authEmails from "../services/emails/authEmails";
-import Session from "../database/models/Session";
 
 const createUserAccount = async (
     req: ExtendedRequest,
@@ -29,7 +28,7 @@ const userLogin = async (req: ExtendedRequest, res: Response): Promise<any> => {
             return sendError(res, "You entered wrong email or password.", 400)
         }
 
-        const token = await generateToken(String(req?.user?.email))
+        const token = await generateToken(String(req?.user?.id))
         const session = await userRepositories.saveSession({ token, userId: Number(req?.user?.id) })
 
         const { password, ...safeUser } = req?.user || {}

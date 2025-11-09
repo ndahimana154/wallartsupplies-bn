@@ -11,6 +11,7 @@ const db_name = String(process.env.DB_NAME || "")
 export const sequelizeInstance = new Sequelize(db_name, db_username, db_password, {
     host: db_host,
     dialect: "postgres",
+    logging: false
 })
 
 const connectDB = async () => {
