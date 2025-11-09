@@ -1,4 +1,4 @@
-import { Op } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import { Categories } from "../database/models";
 import { CategoriesAttributes } from "../database/models/Categories";
 import Products, { ProductsAttributes } from "../database/models/Products";
@@ -85,9 +85,57 @@ const customerFindSingleProductByAttribute = async (key: string, value: string) 
                 exclude: ['createdAt', 'updatedAt']
             }
         }]
-    })
+    });
+    console.log(product)
+    if (!product) {
+        return null;
+    }
 
-    return product
+    let relatedProducts = await Products.findAll({
+        where: {
+            id: { [Op.ne]: product.id },
+            categoryId: product.categoryId,
+            status: true
+        },
+        include: [{
+            model: Categories,
+            as: "category",
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            }
+        }],
+        limit: 6,
+        order: [['createdAt', 'DESC']]
+    });
+
+    if (relatedProducts.length < 6) {
+        const remainingCount = 6 - relatedProducts.length;
+        const excludedIds = [product.id, ...relatedProducts.map(p => p.id)];
+
+        const additionalProducts = await Products.findAll({
+            where: {
+                id: { [Op.notIn]: excludedIds },
+                categoryId: { [Op.ne]: product.categoryId },
+                status: true
+            },
+            include: [{
+                model: Categories,
+                as: "category",
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                }
+            }],
+            limit: remainingCount,
+            order: [['createdAt', 'DESC']]
+        });
+
+        relatedProducts = [...relatedProducts, ...additionalProducts];
+    }
+
+    return {
+        ...product.toJSON(),
+        relatedProducts
+    };
 };
 
 const findCategoriesByAttribute = async (key: string, value: string) => {

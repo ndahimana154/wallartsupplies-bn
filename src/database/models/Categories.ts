@@ -5,6 +5,7 @@ export interface CategoriesAttributes {
     id: number;
     slug: string;
     name: string;
+    image: string;
 }
 
 interface CategoriesCreationAttributes extends Optional<CategoriesAttributes, 'id'> { }
@@ -13,6 +14,7 @@ class Categories extends Model<CategoriesAttributes, CategoriesCreationAttribute
     public id!: number;
     public slug!: string;
     public name!: string;
+    public image!: string;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -26,9 +28,15 @@ Categories.init({
     },
     slug: {
         type: DataTypes.STRING,
+        allowNull: false
     },
     name: {
         type: DataTypes.STRING,
+        allowNull: false
+    },
+    image: {
+        type: DataTypes.STRING,
+        allowNull: false
     }
 }, {
     sequelize: sequelizeInstance,

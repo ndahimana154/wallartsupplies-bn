@@ -31,6 +31,15 @@ const findSessionBy2Attribute = async (key1: string, value1: string, key2: strin
     return session
 }
 
+const findSessionByAttribute = async (key: string, value: string) => {
+    const session = await Session.findOne({
+        where: {
+            [key]: value,
+        }
+    })
+    return session
+}
+
 const updateUser = async (id: number, data: UpdateUserData) => {
     const user = await User.update(data, { where: { id } })
     return user
@@ -47,5 +56,6 @@ export default {
     saveSession,
     findSessionBy2Attribute,
     updateUser,
-    deleteSession
+    deleteSession,
+    findSessionByAttribute
 }

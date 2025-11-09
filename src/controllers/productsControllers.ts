@@ -53,6 +53,7 @@ const createNewCategory = async (req: ExtendedRequest, res: Response): Promise<a
         const slug = generateSlug(req.body.name);
         req.body.slug = slug
 
+        console.log(req.body)
         const category = await productRepositories.saveCategory(req.body);
         return sendSuccess(res, "Category created successfully", category)
     } catch (error: any) {
@@ -70,11 +71,28 @@ const getCategories = async (req: ExtendedRequest, res: Response): Promise<any> 
     }
 }
 
+const customerGetBestCategories = async (req: ExtendedRequest, res: Response): Promise<any> => {
+    try {
+        const categories = await productRepositories.findCategories(
+            {
+                name: ''
+            },
+            {
+                sortBy: "updatedAt",
+                order: "DESC",
+                limit: 6
+            });
+        return sendSuccess(res, "Categories retrieved successfully", categories)
+    } catch (error: any) {
+        return sendError(res, error.message);
+    }
+}
 export default {
     createNewProduct,
     createNewCategory,
     getCategories,
     getProductsList,
     getRecentCollections,
-    customerGetSingleProduct
+    customerGetSingleProduct,
+    customerGetBestCategories
 }

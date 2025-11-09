@@ -14,10 +14,23 @@ export const comparePassword = async (plain: string, hash: string) => {
     return await bcrypt.compare(plain, hash)
 }
 
-export const generateToken = async (payload: string) => {
-    return jwt.sign(payload, JWT_SECRET)
+export const generateToken = async (id: string) => {
+    return jwt.sign({ id }, JWT_SECRET)
 }
 
 export const verifyToken = async (payload: string) => {
     return jwt.verify(payload, JWT_SECRET)
 }
+
+export const decodeToken = (token: string): any | null => {
+    try {
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            throw new Error("JWT_SECRET is not defined in the environment variables.");
+        }
+        return jwt.verify(token, secret);
+    } catch (error: any) {
+        console.error("Token verification error:", error.message);
+        return { status: 401, message: "Token verification failed" };
+    }
+};
