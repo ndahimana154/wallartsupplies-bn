@@ -8,6 +8,7 @@ export interface HeroAdsAttributes {
     image: string;
     buttonText: string;
     link: string;
+    isActive: boolean;
 }
 
 interface HeroAdsCreationAttributes extends Optional<HeroAdsAttributes, 'id'> { }
@@ -19,6 +20,7 @@ class HeroAds extends Model<HeroAdsAttributes, HeroAdsCreationAttributes> implem
     public image!: string;
     public buttonText!: string;
     public link!: string;
+    public isActive!: boolean;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -35,6 +37,7 @@ HeroAds.init({
     image: { type: DataTypes.STRING, allowNull: false },
     buttonText: { type: DataTypes.STRING, allowNull: false },
     link: { type: DataTypes.STRING, allowNull: false },
+    isActive: { type: DataTypes.BOOLEAN, allowNull: false }
 }, {
     sequelize: sequelizeInstance,
     modelName: "HeroAds",
