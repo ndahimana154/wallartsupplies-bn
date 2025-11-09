@@ -87,6 +87,22 @@ const customerGetBestCategories = async (req: ExtendedRequest, res: Response): P
         return sendError(res, error.message);
     }
 }
+
+const customerGetProductsByCategory = async (req: ExtendedRequest, res: Response): Promise<any> => {
+    try {
+        const category = await productRepositories.findCategoriesByAttribute("slug", req.params.slug);
+        if (!category) {
+            return sendError(res, "Category is not found!")
+        }
+
+        const products = await productRepositories.findCustomerProducts({ categoryId: category.id });
+        return sendSuccess(res, "Category products are retrieved successfully", { category, products })
+
+    } catch (error: any) {
+        return sendError(res, error.message)
+    }
+}
+
 export default {
     createNewProduct,
     createNewCategory,
@@ -94,5 +110,6 @@ export default {
     getProductsList,
     getRecentCollections,
     customerGetSingleProduct,
-    customerGetBestCategories
+    customerGetBestCategories,
+    customerGetProductsByCategory
 }

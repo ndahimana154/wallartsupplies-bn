@@ -18,4 +18,5 @@ export interface ProductFilters {
     name?: string;
     status?: boolean;
     description?: string;
+    categoryId?: number
 }

@@ -16,5 +16,6 @@ productsRoutes.get("/category/list", isUserAuthorized, productsControllers.getCa
 productsRoutes.get("/customer-get-recent-collections", productsControllers.getRecentCollections);
 productsRoutes.get("/customer-get-product/:slug", productsControllers.customerGetSingleProduct);
 productsRoutes.get("/customer-get-best-categories", productsControllers.customerGetBestCategories)
+productsRoutes.get("/category/customer-get-products/:slug", productsControllers.customerGetProductsByCategory)
 
 export default productsRoutes
