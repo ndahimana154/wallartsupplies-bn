@@ -47,7 +47,40 @@ const findHeroAds = async (filters: HeroAdsFilters = {}, queries: QueryOptions =
     };
 }
 
+const findHeroAdByAttribute = async (key: string, value: string) => {
+    const ad = await HeroAds.findOne({
+        where: {
+            [key]: value
+        }
+    })
+    return ad
+}
+
+const updateHeroAds = async (id: number, data: HeroAdsAttributes) => {
+    const [affectedCount] = await HeroAds.update(data, {
+        where: { id }
+    });
+
+    if (affectedCount === 0) {
+        throw new Error('HeroAd not found or no changes made');
+    }
+
+    const updatedHeroAd = await HeroAds.findByPk(id);
+
+    return {
+        affectedCount,
+        updatedHeroAd
+    };
+};
+
+const deleteHeroAds = async (id: number) => {
+    return await HeroAds.destroy({ where: { id } })
+}
+
 export default {
     saveHeroAds,
-    findHeroAds
+    findHeroAds,
+    findHeroAdByAttribute,
+    updateHeroAds,
+    deleteHeroAds
 }

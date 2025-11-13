@@ -33,11 +33,11 @@ HeroAds.init({
         primaryKey: true
     },
     title: { type: DataTypes.STRING, allowNull: false },
-    description: { type: DataTypes.STRING, allowNull: false },
+    description: { type: DataTypes.TEXT, allowNull: false },
     image: { type: DataTypes.STRING, allowNull: false },
     buttonText: { type: DataTypes.STRING, allowNull: false },
     link: { type: DataTypes.STRING, allowNull: false },
-    isActive: { type: DataTypes.BOOLEAN, allowNull: false }
+    isActive: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true }
 }, {
     sequelize: sequelizeInstance,
     modelName: "HeroAds",
