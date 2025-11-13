@@ -1,9 +1,6 @@
 
 export interface CategoryFilters {
     name?: string;
-    status?: string;
-    createdFrom?: Date;
-    createdTo?: Date;
 }
 
 export interface QueryOptions {
@@ -19,4 +16,11 @@ export interface ProductFilters {
     status?: boolean;
     description?: string;
     categoryId?: number
+}
+
+export interface iCategoryData {
+    id?: number;
+    slug?: string;
+    name?: string;
+    image?: string;
 }

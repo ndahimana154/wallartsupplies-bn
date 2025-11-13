@@ -3,13 +3,12 @@ import { ExtendedRequest } from "../types/Request";
 import { sendError, sendSuccess } from "../helpers/apiResponse";
 import productRepositories from "../repositories/productRepositories";
 import { generateSlug } from "../helpers/productsHelpers";
+import { CategoryFilters, QueryOptions } from "../types/ProductTypes";
 
 const createNewProduct = async (req: ExtendedRequest, res: Response): Promise<any> => {
     try {
         const slug = generateSlug(req.body.name)
         req.body.slug = slug
-
-        console.log("DDD", req.body)
 
         const product = await productRepositories.saveProduct(req.body)
         return sendSuccess(res, "Product create successfully", product)
@@ -53,7 +52,6 @@ const createNewCategory = async (req: ExtendedRequest, res: Response): Promise<a
         const slug = generateSlug(req.body.name);
         req.body.slug = slug
 
-        console.log(req.body)
         const category = await productRepositories.saveCategory(req.body);
         return sendSuccess(res, "Category created successfully", category)
     } catch (error: any) {
@@ -63,7 +61,20 @@ const createNewCategory = async (req: ExtendedRequest, res: Response): Promise<a
 
 const getCategories = async (req: ExtendedRequest, res: Response): Promise<any> => {
     try {
-        const categories = await productRepositories.findCategories();
+        const { page, limit, name, sortBy, order } = req.query;
+
+        const filters: CategoryFilters = {}
+        if (name) filters.name = name as string;
+
+        const queries: QueryOptions = {
+            page: parseInt(page as string) || 1,
+            limit: parseInt(limit as string) || 10,
+            sortBy: (sortBy as string) || 'updatedAt',
+            order: (order as 'ASC' | 'DESC') || 'DESC'
+        };
+
+
+        const categories = await productRepositories.findCategories(filters, queries);
 
         return sendSuccess(res, "Categories retrieved successfully", categories)
     } catch (error: any) {
@@ -103,6 +114,15 @@ const customerGetProductsByCategory = async (req: ExtendedRequest, res: Response
     }
 }
 
+const updateCategory = async (req: ExtendedRequest, res: Response): Promise<any> => {
+    try {
+        const updated = await productRepositories.updateCategory(Number(req.category?.id), req.body)
+        return sendSuccess(res, "Category is updated successfully", updated)
+    } catch (error: any) {
+        return sendError(res, error.message)
+    }
+}
+
 export default {
     createNewProduct,
     createNewCategory,
@@ -111,5 +131,6 @@ export default {
     getRecentCollections,
     customerGetSingleProduct,
     customerGetBestCategories,
-    customerGetProductsByCategory
+    customerGetProductsByCategory,
+    updateCategory
 }

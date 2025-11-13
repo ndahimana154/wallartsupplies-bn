@@ -14,3 +14,8 @@ export const newCategoryValidations = Joi.object({
     name: Joi.string().required(),
     image: Joi.string().required()
 })
+
+export const updateCategoryValidations = Joi.object({
+    name: Joi.string().optional(),
+    image: Joi.string().optional()
+})
