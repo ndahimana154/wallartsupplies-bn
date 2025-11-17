@@ -44,3 +44,21 @@ export const isCategoryExists = async (req: ExtendedRequest, res: Response, next
         return sendError(res, error.message)
     }
 }
+
+export const isProductExistsById = async (req: ExtendedRequest, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        const { id } = req.params
+        const product = await productRepositories.findProductByAttribute("id", id);
+
+        if (!product) {
+            return sendError(res, "This product doesn't exists exists!", 400);
+        }
+
+        req.product = product
+
+        return next();
+
+    } catch (error: any) {
+        return sendError(res, error.message)
+    }
+}

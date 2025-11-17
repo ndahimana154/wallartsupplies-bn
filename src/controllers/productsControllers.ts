@@ -123,6 +123,16 @@ const updateCategory = async (req: ExtendedRequest, res: Response): Promise<any>
     }
 }
 
+const updateProduct = async (req: ExtendedRequest, res: Response): Promise<any> => {
+    try {
+        const updated = await productRepositories.updateProduct(Number(req?.product?.id), req.body)
+        return sendSuccess(res, "Product updated successfully", updated)
+
+    } catch (error: any) {
+        return sendError(res, error.message)
+    }
+}
+
 export default {
     createNewProduct,
     createNewCategory,
@@ -132,5 +142,6 @@ export default {
     customerGetSingleProduct,
     customerGetBestCategories,
     customerGetProductsByCategory,
-    updateCategory
+    updateCategory,
+    updateProduct
 }

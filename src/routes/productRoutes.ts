@@ -1,6 +1,6 @@
 import express from "express"
 import productsControllers from "../controllers/productsControllers"
-import { isCategoryAlreadyExists, isCategoryExists, isProductAlreadyExists } from "../middlewares/productsMiddleware";
+import { isCategoryAlreadyExists, isCategoryExists, isProductAlreadyExists, isProductExistsById } from "../middlewares/productsMiddleware";
 import bodyValidation from "../middlewares/validationMiddlewares";
 import { newCategoryValidations, newProductValidations, updateCategoryValidations } from "../validations/productsValidations";
 import { isUserAuthorized } from "../middlewares/userAuthorizations";
@@ -9,6 +9,7 @@ const productsRoutes = express.Router()
 
 productsRoutes.post("/new", isUserAuthorized, bodyValidation(newProductValidations), isProductAlreadyExists, productsControllers.createNewProduct);
 productsRoutes.get("/list-all-products", isUserAuthorized, productsControllers.getProductsList);
+productsRoutes.put("/edit/:id", isUserAuthorized, isProductExistsById, productsControllers.updateProduct);
 
 productsRoutes.post("/category/new", isUserAuthorized, bodyValidation(newCategoryValidations), isCategoryAlreadyExists, productsControllers.createNewCategory);
 productsRoutes.get("/category/list", isUserAuthorized, productsControllers.getCategories);

@@ -2,7 +2,7 @@ import { Op, Sequelize } from "sequelize";
 import { Categories } from "../database/models";
 import { CategoriesAttributes } from "../database/models/Categories";
 import Products, { ProductsAttributes } from "../database/models/Products";
-import { CategoryFilters, ProductFilters, QueryOptions, iCategoryData } from "../types/ProductTypes";
+import { CategoryFilters, ProductFilters, QueryOptions, iCategoryData, iProductData } from "../types/ProductTypes";
 
 const saveProduct = async (data: ProductsAttributes) => {
     const product = await Products.create(data);
@@ -200,6 +200,21 @@ const updateCategory = async (id: number, data: iCategoryData) => {
     }
 }
 
+const updateProduct = async (id: number, data: iProductData) => {
+    const [affectedCount] = await Products.update(data, {
+        where: { id }
+    })
+    if (affectedCount === 0) {
+        throw new Error("Product is not found or not changed")
+    }
+
+    const updatedProduct = await Products.findByPk(id);
+
+    return {
+        affectedCount,
+        updatedProduct
+    }
+}
 export default {
     saveProduct,
     findProductByAttribute,
@@ -209,5 +224,6 @@ export default {
     findCategories,
     findCustomerProducts,
     customerFindSingleProductByAttribute,
-    updateCategory
+    updateCategory,
+    updateProduct
 }

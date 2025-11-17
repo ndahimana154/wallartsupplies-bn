@@ -24,3 +24,16 @@ export interface iCategoryData {
     name?: string;
     image?: string;
 }
+
+export interface iProductData {
+    id: number;
+    name: string;
+    price: number;
+    moq: number;
+    description: string;
+    images: string[];
+    customAttr: { key: string; value: string }[];
+    slug: string;
+    categoryId: number;
+    status: boolean
+}
