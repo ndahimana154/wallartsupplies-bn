@@ -78,8 +78,6 @@ const resetPassword = async (req: ExtendedRequest, res: Response) => {
         const session = await userRepositories.findSessionBy2Attribute("userId", userId, "token", token);
         const isTokenValid = await verifyToken(token);
 
-        console.log("SS", session?.dataValues?.id);
-
         if (!session || !isTokenValid) {
             return sendError(res, "Invalid or expired token", 400);
         }

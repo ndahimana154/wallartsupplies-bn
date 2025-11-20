@@ -76,7 +76,7 @@ const updateHeroAd = async (req: ExtendedRequest, res: Response): Promise<any> =
 const deleteHeroAd = async (req: ExtendedRequest, res: Response): Promise<any> => {
     try {
         const deleted = await HeroAdsRepositories.deleteHeroAds(Number(req.heroAd?.id));
-        console.log(deleted)
+
         return sendSuccess(res, "Hero ad delete successfully", deleted)
     } catch (error: any) {
         return sendError(res, error.message)
