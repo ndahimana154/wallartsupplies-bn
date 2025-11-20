@@ -35,6 +35,9 @@ const findCustomerProducts = async (filters: ProductFilters = {}, queries: Query
     const { name, status = true, description } = filters;
     const { page = 1, limit = 10, sortBy = "createdAt", order = "DESC" } = queries
 
+    console.log("Filters", filters)
+    console.log("Queries", queries)
+
     const where: any = {}
 
     if (name) {

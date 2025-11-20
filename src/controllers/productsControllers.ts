@@ -3,7 +3,7 @@ import { ExtendedRequest } from "../types/Request";
 import { sendError, sendSuccess } from "../helpers/apiResponse";
 import productRepositories from "../repositories/productRepositories";
 import { generateSlug } from "../helpers/productsHelpers";
-import { CategoryFilters, QueryOptions } from "../types/ProductTypes";
+import { CategoryFilters, ProductFilters, QueryOptions } from "../types/ProductTypes";
 
 const createNewProduct = async (req: ExtendedRequest, res: Response): Promise<any> => {
     try {
@@ -29,8 +29,19 @@ const getProductsList = async (req: ExtendedRequest, res: Response): Promise<any
 
 const getRecentCollections = async (req: ExtendedRequest, res: Response): Promise<any> => {
     try {
-        const products = await productRepositories.findCustomerProducts();
-        return sendSuccess(res, "Products retrieved successfully", products)
+
+        const queries: QueryOptions = {}
+        const filters: ProductFilters = {}
+
+        if (req.query.name) filters.name = String(req.query.name)
+
+        if (req.query.page) queries.page = Number(req.query.page);
+        if (req.query.limit) queries.limit = Number(req.query.limit);
+        if (req.query.sortBy) queries.sortBy = String(req.query.sortBy);
+        if (req.query.order) queries.order = String(req.query.order);
+
+        const products = await productRepositories.findCustomerProducts(filters, queries);
+        return sendSuccess(res, "Products retrieved successfully", products);
     } catch (error: any) {
         return sendError(res, error.message)
     }
@@ -133,6 +144,26 @@ const updateProduct = async (req: ExtendedRequest, res: Response): Promise<any> 
     }
 }
 
+const getDashboardData = async (req: ExtendedRequest, res: Response): Promise<any> => {
+    try {
+        const products = await productRepositories.findAllProducts();
+        const categories = await productRepositories.findCategories()
+
+        return sendSuccess(res, "Dashboard data retrieved successfully", {
+            dashboard: {
+                totalProducts: products.length,
+                totalCategories: categories.data.length
+            },
+            data: {
+                products: products.slice(0, 4),
+                categories: categories.data
+            }
+        })
+    } catch (error: any) {
+        return sendError(res, error.message)
+    }
+}
+
 export default {
     createNewProduct,
     createNewCategory,
@@ -143,5 +174,6 @@ export default {
     customerGetBestCategories,
     customerGetProductsByCategory,
     updateCategory,
-    updateProduct
+    updateProduct,
+    getDashboardData
 }

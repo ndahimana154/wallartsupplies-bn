@@ -20,4 +20,6 @@ productsRoutes.get("/customer-get-product/:slug", productsControllers.customerGe
 productsRoutes.get("/customer-get-best-categories", productsControllers.customerGetBestCategories)
 productsRoutes.get("/category/customer-get-products/:slug", productsControllers.customerGetProductsByCategory)
 
+productsRoutes.get("/get-dashboard-data", productsControllers.getDashboardData);
+
 export default productsRoutes
