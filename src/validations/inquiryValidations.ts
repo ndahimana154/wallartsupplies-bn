@@ -7,3 +7,7 @@ export const newInquiryValidations = Joi.object({
     projectDescription: Joi.string().required(),
     images: Joi.array().required(),
 })
+
+export const toggleResolvedStatusValidations = Joi.object({
+    status: Joi.string().valid('RESOLVED', 'UNRESOLVED').required(),
+})

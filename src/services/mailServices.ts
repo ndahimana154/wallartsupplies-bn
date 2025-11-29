@@ -9,6 +9,11 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+// Verify transporter configuration on startup to catch auth/connectivity issues early
+transporter.verify()
+    .then(() => console.log("✅ Mail transporter is ready"))
+    .catch((err) => console.error("❌ Mail transporter verification failed:", err));
+
 export const sendEmail = async ({
     to,
     subject,
@@ -28,12 +33,18 @@ export const sendEmail = async ({
 }) => {
     const html = buildEmailTemplate({ title, content, buttonText, buttonUrl, image });
 
-    const info = await transporter.sendMail({
-        from: `"Wall Art Supplies" <${process.env.GOOGLE_APP_USERNAME}>`,
-        to,
-        subject,
-        html,
-    });
+    try {
+        const info = await transporter.sendMail({
+            from: `"Wall Art Supplies" <${process.env.GOOGLE_APP_USERNAME}>`,
+            to,
+            subject,
+            html,
+        });
 
-    console.log("✅ Email sent:", info.messageId);
+        console.log("✅ Email sent:", info.messageId);
+        return info;
+    } catch (error: any) {
+        console.error("❌ Failed to send email:", error && error.message ? error.message : error);
+        throw error;
+    }
 };

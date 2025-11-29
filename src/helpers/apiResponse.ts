@@ -25,5 +25,6 @@ export const sendError = (
         message,
         data: null,
     };
+    console.error("Error happened",response)
     return res.status(statusCode).json(response);
 };
