@@ -45,7 +45,10 @@ const userLogin = async (req: ExtendedRequest, res: Response): Promise<any> => {
 const forgotPassword = async (req: ExtendedRequest, res: Response): Promise<any> => {
     try {
         const token = await generateToken(String(req?.user?.email));
-        await userRepositories.saveSession({ userId: Number(req?.user?.id), token });
+     const session =   await userRepositories.saveSession({ userId: Number(req?.user?.id), token });
+        console.log("Token",token,"Session",session)
+        console.log("Request",req.body)
+        console.log("user",req.user)
         await authEmails.sendForgotPasswordEmail(String(req?.user?.email), Number(req?.user?.id), token)
 
         return sendSuccess(res, "We have sent the next steps to your email inbox", 200);

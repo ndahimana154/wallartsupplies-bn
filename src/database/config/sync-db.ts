@@ -1,5 +1,6 @@
-import { Categories, Products, Session, User } from "../models";
-import connectDB, { sequelizeInstance } from "./db";
+import { Categories, HeroAds, Products, Session, User } from "../models";
+import CustomInquiries from "../models/CustomInquiries";
+import connectDB from "./db";
 
 async function syncDatabase() {
     try {
@@ -10,6 +11,8 @@ async function syncDatabase() {
         await Categories.sync({ force: true });
         await Products.sync({ force: true });
         await Session.sync({ force: true });
+        await HeroAds.sync({force:true})
+        await CustomInquiries.sync({force:true})
 
         console.log("All models synchronized successfully!");
 
