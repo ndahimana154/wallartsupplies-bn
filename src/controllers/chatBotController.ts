@@ -2,43 +2,9 @@ import { Response } from "express";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ExtendedRequest } from "../types/Request";
 import { sendError, sendSuccess } from "../helpers/apiResponse";
+import productRepositories from "../repositories/productRepositories";
 
-const storeData = {
-    storeName: "Bonheur Arts",
-    description: "A Rwandan digital art & frame design store offering custom wall designs, frames, posters, and canvas prints.",
-    products: [
-        {
-            id: 1,
-            name: "Black Modern Frame",
-            price: "25,000 RWF",
-            size: "A4 / A3",
-            description: "Sleek black frame perfect for modern home decor."
-        },
-        {
-            id: 2,
-            name: "Wooden Brown Frame",
-            price: "35,000 RWF",
-            size: "A4 / A3 / A2",
-            description: "Handcrafted wooden frame for warm & natural design style."
-        },
-        {
-            id: 3,
-            name: "Custom Poster Design",
-            price: "50,000 RWF",
-            size: "A3 / A2",
-            description: "Fully customized digital poster based on customer request."
-        }
-    ],
-    shipping: {
-        Kigali: "2,000 RWF",
-        OutsideKigali: "5,000 RWF"
-    },
-    contact: {
-        phone: "+250 780 000 000",
-        instagram: "@bonheur_arts",
-        email: "info@bonheurarts.com"
-    }
-};
+
 
 // Init Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
@@ -47,6 +13,20 @@ const model = genAI.getGenerativeModel({
 });
 
 const sendChat = async (req: ExtendedRequest, res: Response): Promise<any> => {
+    const products = await productRepositories.findAllProducts();
+    const origin = req
+console.log("request details",req);
+const storeData = {
+    storeName: "WallArt Supplies",
+    punchline:"Preserving memories, enhancing art, and telling stories through exceptional framing since 2015. Where craftsmanship meets creativity.",
+    description: "Founded in a small studio in 2015, Wall Art Supllies began with a simple mission: to provide artists, photographers, and art lovers with framing solutions that truly honor their work. What started as a passion project between two art school graduates has grown into a trusted name in custom framing, serving clients nationwide while maintaining our commitment to handcrafted quality. Today, we continue to blend traditional framing techniques with innovative approaches, ensuring every piece we frame tells its story beautifully for generations to come.",
+    products: products,
+    contact: {
+        phone: "+250 780 000 000",
+        instagram: "@bonheur_arts",
+        email: "info@bonheurarts.com"
+    }
+};
     const { message } = req.body;
 
     try {
@@ -60,7 +40,8 @@ Help customers with:
 - shipping
 - recommendations
 - custom orders
-
+- about company(who we are, what we do,ourt mission, our goal) and you refine them accourding to data yo have.
+If query needs products, list products but also put link to the product details and order using its slug, product link ${origin}/product-detail/slug
 If unsure, ask for more details.
 
 Store Data:
