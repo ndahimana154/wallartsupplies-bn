@@ -2,6 +2,7 @@ import { Op, Sequelize } from "sequelize";
 import { Categories } from "../database/models";
 import { CategoriesAttributes } from "../database/models/Categories";
 import Products, { ProductsAttributes } from "../database/models/Products";
+import ProductViews from "../database/models/ProductViews";
 import { CategoryFilters, ProductFilters, QueryOptions, iCategoryData, iProductData } from "../types/ProductTypes";
 
 const saveProduct = async (data: ProductsAttributes) => {
@@ -75,7 +76,7 @@ const findCustomerProducts = async (filters: ProductFilters = {}, queries: Query
     }
 };
 
-const customerFindSingleProductByAttribute = async (key: string, value: string) => {
+const customerFindSingleProductByAttribute = async (key: string, value: string, meta: { userId?: number | null; ip?: string | null } = {}) => {
     const product = await Products.findOne({
         where: {
             [key]: value,
@@ -92,6 +93,28 @@ const customerFindSingleProductByAttribute = async (key: string, value: string) 
 
     if (!product) {
         return null;
+    }
+
+    // Increment views counter atomically to handle concurrent requests
+    try {
+        await product.increment('views', { by: 1 });
+        // reload instance to get updated views value
+        await product.reload();
+    } catch (err) {
+        // don't block the response if increment fails; log and continue
+        console.error('Failed to increment product views for id', product.id, err);
+    }
+
+    // Record detailed view event for statistics (non-blocking)
+    try {
+        await ProductViews.create({
+            productId: product.id,
+            userId: meta.userId ?? null,
+            ipAddress: meta.ip ?? null,
+            viewedAt: new Date()
+        });
+    } catch (err) {
+        console.error('Failed to record product view event for id', product.id, err);
     }
 
     let relatedProducts = await Products.findAll({

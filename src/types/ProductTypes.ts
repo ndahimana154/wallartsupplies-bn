@@ -36,4 +36,5 @@ export interface iProductData {
     slug: string;
     categoryId: number;
     status: boolean
+    views?: number
 }

@@ -6,7 +6,8 @@
     "dev": "nodemon",
     "build": "tsc",
     "start": "node dist/index.js",
-    "sync-db": "ts-node ./src/database/config/sync-db.ts"
+    "sync-db": "ts-node ./src/database/config/sync-db.ts",
+    "seed-db": "ts-node ./src/database/seeds/seed-db.ts"
   },
   "keywords": [],
   "author": "",
