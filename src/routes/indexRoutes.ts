@@ -3,6 +3,7 @@ import userRoutes from "./userRoutes"
 import productsRoutes from "./productRoutes";
 import heroAdsRoutes from "./heroAdsRoutes";
 import inquiriesRoute from "./inquiriesRoutes";
+import chatBotRoutes from "./chatBotRoutes";
 
 const indexRoutes = express.Router()
 
@@ -10,5 +11,6 @@ indexRoutes.use("/user", userRoutes);
 indexRoutes.use("/product", productsRoutes);
 indexRoutes.use("/hero-ads", heroAdsRoutes);
 indexRoutes.use("/inquiries", inquiriesRoute);
+indexRoutes.use("/chatbot", chatBotRoutes);
 
 export default indexRoutes

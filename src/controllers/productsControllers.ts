@@ -2,6 +2,8 @@ import { Response } from "express"
 import { ExtendedRequest } from "../types/Request";
 import { sendError, sendSuccess } from "../helpers/apiResponse";
 import productRepositories from "../repositories/productRepositories";
+import { ProductViews, Products } from "../database/models";
+import { Op, Sequelize } from "sequelize";
 import { generateSlug } from "../helpers/productsHelpers";
 import { CategoryFilters, ProductFilters, QueryOptions } from "../types/ProductTypes";
 
@@ -50,7 +52,7 @@ const getRecentCollections = async (req: ExtendedRequest, res: Response): Promis
 const customerGetSingleProduct = async (req: ExtendedRequest, res: Response): Promise<any> => {
     try {
         const slug = req.params.slug
-        const product = await productRepositories.customerFindSingleProductByAttribute("slug", slug);
+        const product = await productRepositories.customerFindSingleProductByAttribute("slug", slug, { userId: req.user?.id ?? null, ip: req.ip ?? null });
         return sendSuccess(res, "Product retrieved successfully", product)
     } catch (error: any) {
         return sendError(res, error.message)
@@ -104,8 +106,8 @@ const customerGetBestCategories = async (req: ExtendedRequest, res: Response): P
                 order: "DESC",
                 limit: 6
             });
-            return sendSuccess(res, "Categories retrieved successfully", categories)
-        } catch (error: any) {
+        return sendSuccess(res, "Categories retrieved successfully", categories)
+    } catch (error: any) {
         return sendError(res, error.message);
     }
 }
@@ -147,22 +149,108 @@ const updateProduct = async (req: ExtendedRequest, res: Response): Promise<any> 
 const getDashboardData = async (req: ExtendedRequest, res: Response): Promise<any> => {
     try {
         const products = await productRepositories.findAllProducts();
-        const categories = await productRepositories.findCategories()
+        const categories = await productRepositories.findCategories();
+
+        const totalViews = await ProductViews.count();
+
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        const viewsToday = await ProductViews.count({
+            where: {
+                viewedAt: { [Op.gte]: startOfToday }
+            }
+        });
+
+        const twelveMonthsAgo = new Date();
+        twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+        twelveMonthsAgo.setHours(0, 0, 0, 0);
+
+        const dateTruncMonth = Sequelize.fn('date_trunc', 'month', Sequelize.col('viewedAt'));
+
+        const last12MonthsRaw = await ProductViews.findAll({
+            attributes: [
+                [dateTruncMonth, 'month'],
+                [Sequelize.fn('COUNT', Sequelize.col('*')), 'count']
+            ],
+            where: {
+                viewedAt: { [Op.gte]: twelveMonthsAgo }
+            },
+            group: [dateTruncMonth],
+            order: [[dateTruncMonth, 'ASC']]
+        });
+
+        let last12MonthsTotalViews = 0;
+        const last12MonthsAnalytics: { month: string; views: number }[] = [];
+
+        for (const r of last12MonthsRaw as any[]) {
+            const monthVal = r.get('month');
+            const d = monthVal instanceof Date ? monthVal : new Date(monthVal);
+            const monthKey = d.toISOString().slice(0, 7);
+            const views = Number(r.get('count') ?? 0);
+
+            last12MonthsAnalytics.push({ month: monthKey, views });
+            last12MonthsTotalViews += views;
+        }
+
+
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const topProductsRaw = await ProductViews.findAll({
+            attributes: [
+                'productId',
+                [Sequelize.fn('COUNT', Sequelize.col('*')), 'viewsCount']
+            ],
+            where: {
+                viewedAt: { [Op.gte]: thirtyDaysAgo }
+            },
+            group: ['productId'],
+            order: [[Sequelize.literal('COUNT(*)'), 'DESC']],
+            limit: 5
+        });
+
+        const topIds = topProductsRaw.map((r: any) => Number(r.get('productId')));
+
+        const countsById: Record<number, number> = {};
+        for (const r of topProductsRaw) {
+            countsById[Number(r.get('productId'))] = Number(r.get('viewsCount') ?? 0);
+        }
+
+        const productsDetails = await Products.findAll({
+            where: { id: topIds },
+            attributes: ['id', 'name', 'slug', 'price', 'images']
+        });
+
+        const productMap: Record<number, any> = {};
+        for (const p of productsDetails) productMap[p.id] = p;
+
+        const topProductsByViews = topIds.map(id => ({
+            productId: id,
+            views: countsById[id] || 0,
+            product: productMap[id] || null
+        }));
 
         return sendSuccess(res, "Dashboard data retrieved successfully", {
             dashboard: {
                 totalProducts: products.length,
-                totalCategories: categories.data.length
+                totalCategories: categories.data.length,
+                totalViews,
+                viewsToday,
+                last12MonthsTotalViews,
+                last12MonthsAnalytics
             },
             data: {
                 products: products.slice(0, 4),
-                categories: categories.data
+                categories: categories.data,
+                topProductsByViews
             }
-        })
+        });
+
     } catch (error: any) {
-        return sendError(res, error.message)
+        return sendError(res, error.message);
     }
-}
+};
 
 export default {
     createNewProduct,

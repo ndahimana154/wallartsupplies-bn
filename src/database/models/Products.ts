@@ -13,6 +13,7 @@ export interface ProductsAttributes {
     slug: string;
     categoryId: number;
     status: boolean
+    views?: number
 }
 
 interface ProductsCreationAttributes
@@ -31,6 +32,7 @@ class Products
     public slug!: string;
     public categoryId!: number;
     public status!: boolean
+    public views!: number
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -88,6 +90,12 @@ Products.init(
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: true
+        }
+        ,
+        views: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
         }
     },
     {
