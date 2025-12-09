@@ -138,6 +138,7 @@ const updateCategory = async (req: ExtendedRequest, res: Response): Promise<any>
 
 const updateProduct = async (req: ExtendedRequest, res: Response): Promise<any> => {
     try {
+        console.log('Updating product with ID:', req?.product?.id);
         const updated = await productRepositories.updateProduct(Number(req?.product?.id), req.body)
         return sendSuccess(res, "Product updated successfully", updated)
 
