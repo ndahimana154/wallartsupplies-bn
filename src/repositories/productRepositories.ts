@@ -21,6 +21,7 @@ const findProductByAttribute = async (key: string, value: string) => {
 
 const findAllProducts = async () => {
     const products = await Products.findAll({
+        order: [['createdAt', 'DESC']],
         include: [{
             model: Categories,
             as: "category",
