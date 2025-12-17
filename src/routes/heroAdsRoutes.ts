@@ -9,7 +9,7 @@ const heroAdsRoutes = express.Router()
 
 heroAdsRoutes.post("/new", isUserAuthorized, bodyValidation(newHeroAdsValidations), HeroAdsControoller.createNewHeroAds)
 heroAdsRoutes.get("/get-all", isUserAuthorized, HeroAdsControoller.getAllHeroAds)
-heroAdsRoutes.put("/update/:id", isUserAuthorized, isHeroAdsExistsById, bodyValidation(editHeroAdsValidaions), HeroAdsControoller.updateHeroAd)
+heroAdsRoutes.put("/update/:id", isUserAuthorized, bodyValidation(editHeroAdsValidaions), isHeroAdsExistsById, HeroAdsControoller.updateHeroAd)
 heroAdsRoutes.delete("/delete/:id", isUserAuthorized, isHeroAdsExistsById, HeroAdsControoller.deleteHeroAd)
 
 heroAdsRoutes.get("/customer-get-ads", HeroAdsControoller.customerGetAds)

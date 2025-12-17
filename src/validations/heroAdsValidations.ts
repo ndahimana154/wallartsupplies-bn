@@ -18,6 +18,7 @@ export const newHeroAdsValidations = Joi.object({
 })
 
 export const editHeroAdsValidaions = Joi.object({
+    id: Joi.number().optional(),
     title: Joi.string()
         .optional()
         .min(5)
@@ -31,5 +32,8 @@ export const editHeroAdsValidaions = Joi.object({
         .max(25),
     link: Joi.string()
         .optional(),
-    image: Joi.string().optional()
+    image: Joi.string().optional(),
+    isActive: Joi.boolean().optional(),
+    createdAt: Joi.any().optional(),
+    updatedAt: Joi.any().optional()
 })

@@ -21,6 +21,7 @@ const findProductByAttribute = async (key: string, value: string) => {
 
 const findAllProducts = async () => {
     const products = await Products.findAll({
+        order: [['createdAt', 'DESC']],
         include: [{
             model: Categories,
             as: "category",
@@ -33,7 +34,7 @@ const findAllProducts = async () => {
 };
 
 const findCustomerProducts = async (filters: ProductFilters = {}, queries: QueryOptions = {}) => {
-    const { name, status = true, description } = filters;
+    const { name, status = true, description, categoryId } = filters;
     const { page = 1, limit = 10, sortBy = "createdAt", order = "DESC" } = queries
 
     console.log("Filters", filters)
@@ -49,6 +50,9 @@ const findCustomerProducts = async (filters: ProductFilters = {}, queries: Query
     }
     if (description) {
         where.name = { [Op.like]: `%${description}%` }
+    }
+    if (categoryId) {
+        where.categoryId = categoryId
     }
 
     const offset = (page - 1) * limit
