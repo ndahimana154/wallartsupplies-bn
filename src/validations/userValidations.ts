@@ -25,3 +25,12 @@ export const resetPasswordValidations = Joi.object({
     token: Joi.string().required(),
     password: Joi.string().required()
 })
+
+export const updateUserValidations = Joi.object({
+    id: Joi.number().optional(),
+    email: Joi.string().optional(),
+    password: Joi.string().min(6).max(100).optional(),
+    names: Joi.string().optional(),
+    createdAt: Joi.date().optional(),
+    updatedAt: Joi.date().optional()
+})
