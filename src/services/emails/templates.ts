@@ -1,41 +1,41 @@
 export const buildEmailTemplate = ({
-    title,
-    content,
-    buttonText,
-    buttonUrl,
-    image,
-    previewText,
-    accentColor = "#e67e22",
+  title,
+  content,
+  buttonText,
+  buttonUrl,
+  image,
+  previewText,
+  accentColor = "#e67e22",
 }: {
-    title: string;
-    content: string;
-    buttonText?: string;
-    buttonUrl?: string;
-    image?: string;
-    previewText?: string;
-    accentColor?: string;
+  title: string;
+  content: string;
+  buttonText?: string;
+  buttonUrl?: string;
+  image?: string;
+  previewText?: string;
+  accentColor?: string;
 }) => {
 
-    const hexToRgb = (hex: string) => {
-        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : "230,126,34";
-    };
+  const hexToRgb = (hex: string) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : "230,126,34";
+  };
 
-    const adjustBrightness = (hex: string, percent: number): string => {
-        const num = parseInt(hex.replace("#", ""), 16);
-        const amt = Math.round(2.55 * percent);
-        const R = (num >> 16) + amt;
-        const G = ((num >> 8) & 0x00FF) + amt;
-        const B = (num & 0x0000FF) + amt;
-        return "#" + (
-            0x1000000 +
-            (R < 255 ? R < 0 ? 0 : R : 255) * 0x10000 +
-            (G < 255 ? G < 0 ? 0 : G : 255) * 0x100 +
-            (B < 255 ? B < 0 ? 0 : B : 255)
-        ).toString(16).slice(1);
-    };
+  const adjustBrightness = (hex: string, percent: number): string => {
+    const num = parseInt(hex.replace("#", ""), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) + amt;
+    const G = ((num >> 8) & 0x00FF) + amt;
+    const B = (num & 0x0000FF) + amt;
+    return "#" + (
+      0x1000000 +
+      (R < 255 ? R < 0 ? 0 : R : 255) * 0x10000 +
+      (G < 255 ? G < 0 ? 0 : G : 255) * 0x100 +
+      (B < 255 ? B < 0 ? 0 : B : 255)
+    ).toString(16).slice(1);
+  };
 
-    return `
+  return `
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -101,7 +101,7 @@ export const buildEmailTemplate = ({
           <table class="email-container" width="100%" cellpadding="0" cellspacing="0">
             <tr>
               <td class="email-header">
-                <img src="${process.env.FRONTEND_URL}/main-logo.svg" alt="Wall Art Supplies Logo" />
+                <img src="${process.env.FRONTEND_URL}/main-logo.svg" alt="Jinua Hanji Trading LTD Logo" />
                 <h2>${title}</h2>
               </td>
             </tr>
@@ -126,7 +126,7 @@ export const buildEmailTemplate = ({
                   <a href="${process.env.FRONTEND_URL}/unsubscribe">Unsubscribe</a> |
                   <a href="${process.env.FRONTEND_URL}/privacy">Privacy Policy</a>
                 </div>
-                <p style="margin-top:8px;">© ${new Date().getFullYear()} Wall Art Supplies. All rights reserved.</p>
+                <p style="margin-top:8px;">© ${new Date().getFullYear()} Jinua Hanji Trading LTD. All rights reserved.</p>
                 <p><small>123 Art Street, Creative City, CA 94107</small></p>
               </td>
             </tr>

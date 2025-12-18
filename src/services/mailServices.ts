@@ -35,7 +35,7 @@ export const sendEmail = async ({
 
     try {
         const info = await transporter.sendMail({
-            from: `"Wall Art Supplies" <${process.env.GOOGLE_APP_USERNAME}>`,
+            from: `"Jinua Hanji Trading LTD" <${process.env.GOOGLE_APP_USERNAME}>`,
             to,
             subject,
             html,
