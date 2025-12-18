@@ -13,11 +13,11 @@ const model = genAI.getGenerativeModel({
 const sendChat = async (req: ExtendedRequest, res: Response): Promise<any> => {
   const products = await productRepositories.findAllProducts();
   const storeData = {
-    storeName: "WallArt Supplies",
+    storeName: "Jinhua Hanjji Trading Company LTD",
     punchline:
       "Preserving memories, enhancing art, and telling stories through exceptional framing since 2015. Where craftsmanship meets creativity.",
     description:
-      "Founded in a small studio in 2015, Wall Art Supllies began with a simple mission: to provide artists, photographers, and art lovers with framing solutions that truly honor their work. What started as a passion project between two art school graduates has grown into a trusted name in custom framing, serving clients nationwide while maintaining our commitment to handcrafted quality. Today, we continue to blend traditional framing techniques with innovative approaches, ensuring every piece we frame tells its story beautifully for generations to come.",
+      "Founded in a small studio in 2015,Jinhua Hanjji  Trading Company LTD began with a simple mission: to provide artists, photographers, and art lovers with framing solutions that truly honor their work. What started as a passion project between two art school graduates has grown into a trusted name in custom framing, serving clients nationwide while maintaining our commitment to handcrafted quality. Today, we continue to blend traditional framing techniques with innovative approaches, ensuring every piece we frame tells its story beautifully for generations to come.",
     products: products,
     contact: {
       phone: "+250 780 000 000",
@@ -57,7 +57,7 @@ User: ${message}
     const result = await model.generateContent(finalPrompt);
 
     const reply =
-      result.response.text() ?? "Sorry, I couldn't generate a response.";      
+      result.response.text() ?? "Sorry, I couldn't generate a response.";
 
     return sendSuccess(res, "Chat response generated successfully", { reply });
   } catch (error: any) {
