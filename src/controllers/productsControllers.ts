@@ -31,23 +31,56 @@ const getProductsList = async (req: ExtendedRequest, res: Response): Promise<any
 
 const getRecentCollections = async (req: ExtendedRequest, res: Response): Promise<any> => {
     try {
+        const queries: QueryOptions = {};
+        const filters: ProductFilters = {};
 
-        const queries: QueryOptions = {}
-        const filters: ProductFilters = {}
+        if (req.query.search && typeof req.query.search === 'string') {
+            filters.search = req.query.search.trim();
+        }
 
-        if (req.query.name) filters.name = String(req.query.name)
+        if (req.query.categoryId) {
+            const categoryId = parseInt(String(req.query.categoryId));
+            if (!isNaN(categoryId)) {
+                filters.categoryId = categoryId;
+            }
+        }
 
-        if (req.query.page) queries.page = Number(req.query.page);
-        if (req.query.limit) queries.limit = Number(req.query.limit);
-        if (req.query.sortBy) queries.sortBy = String(req.query.sortBy);
-        if (req.query.order) queries.order = String(req.query.order);
+        if (req.query.page) {
+            const page = parseInt(String(req.query.page));
+            if (!isNaN(page) && page > 0) {
+                queries.page = page;
+            }
+        }
+
+        if (req.query.limit) {
+            const limit = parseInt(String(req.query.limit));
+            if (!isNaN(limit) && limit > 0 && limit <= 100) {
+                queries.limit = limit;
+            }
+        }
+
+        if (req.query.sortBy && typeof req.query.sortBy === 'string') {
+            const allowedSortFields = ['name', 'price', 'createdAt', 'updatedAt'];
+            if (allowedSortFields.includes(req.query.sortBy)) {
+                queries.sortBy = req.query.sortBy;
+            }
+        }
+
+        if (req.query.order && typeof req.query.order === 'string') {
+            const order = req.query.order.toUpperCase();
+            if (order === 'ASC' || order === 'DESC') {
+                queries.order = order;
+            }
+        }
 
         const products = await productRepositories.findCustomerProducts(filters, queries);
+        console.log("PP", products)
         return sendSuccess(res, "Products retrieved successfully", products);
     } catch (error: any) {
-        return sendError(res, error.message)
+        console.error('Error in getRecentCollections:', error);
+        return sendError(res, error.message || "Failed to retrieve products");
     }
-}
+};
 
 const customerGetSingleProduct = async (req: ExtendedRequest, res: Response): Promise<any> => {
     try {

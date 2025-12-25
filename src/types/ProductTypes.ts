@@ -15,7 +15,8 @@ export interface ProductFilters {
     name?: string;
     status?: boolean;
     description?: string;
-    categoryId?: number
+    categoryId?: number;
+    search?: string;
 }
 
 export interface iCategoryData {

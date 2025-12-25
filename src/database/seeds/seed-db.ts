@@ -10,7 +10,6 @@ async function seed() {
     await connectDB();
     console.log('DB connected for seeding');
 
-    // Seed test user
     const testEmail = process.env.SEED_USER_EMAIL || 'test@example.com';
     const testName = process.env.SEED_USER_NAME || 'Test User';
     const testPasswordPlain = process.env.SEED_USER_PASSWORD || 'password123';
@@ -29,7 +28,6 @@ async function seed() {
       throw err;
     }
 
-    // Seed categories
     const categoriesData = [
       { slug: 'frames', name: 'Frames', image: '/images/categories/frames.jpg' },
       { slug: 'posters', name: 'Posters', image: '/images/categories/posters.jpg' }
@@ -42,7 +40,6 @@ async function seed() {
     }
     console.log('Seeded categories:', createdCategories.map(c => c.slug).join(', '));
 
-    // Seed products
     const productsData = [
       {
         slug: 'black-modern-frame',

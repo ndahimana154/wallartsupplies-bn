@@ -34,49 +34,64 @@ const findAllProducts = async () => {
 };
 
 const findCustomerProducts = async (filters: ProductFilters = {}, queries: QueryOptions = {}) => {
-    const { name, status = true, description, categoryId } = filters;
-    const { page = 1, limit = 10, sortBy = "createdAt", order = "DESC" } = queries
+    const { status = true, categoryId, search } = filters;
+    const { page = 1, limit = 10, sortBy = "createdAt", order = "DESC" } = queries;
 
-    console.log("Filters", filters)
-    console.log("Queries", queries)
+    console.log("Search parameter:", search);
+    console.log("Filters:", filters);
 
-    const where: any = {}
+    const where: any = {};
 
-    if (name) {
-        where.name = { [Op.like]: `%${name}%` }
-    }
     if (status) {
-        where.status = status
+        where.status = status;
     }
-    if (description) {
-        where.name = { [Op.like]: `%${description}%` }
-    }
+
     if (categoryId) {
-        where.categoryId = categoryId
+        where.categoryId = categoryId;
     }
 
-    const offset = (page - 1) * limit
+    if (search) {
+        const searchTerm = `%${search}%`;
 
-    const { count, rows } = await Products.findAndCountAll({
-        where,
-        limit,
-        offset,
-        order: [[sortBy, order]],
-        include: [{
-            model: Categories,
-            as: "category",
-            attributes: {
-                exclude: ['createdAt', 'updatedAt']
+        where[Op.or] = [
+            { name: { [Op.iLike]: searchTerm } },        // Case-insensitive LIKE
+            { description: { [Op.iLike]: searchTerm } }   // Case-insensitive LIKE
+        ];
+    }
+
+    console.log("WHERE clause:", JSON.stringify(where, null, 2));
+
+    const offset = (page - 1) * limit;
+
+    try {
+        const { count, rows } = await Products.findAndCountAll({
+            where,
+            limit,
+            offset,
+            order: [[sortBy, order]],
+            include: [{
+                model: Categories,
+                as: "category",
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                }
+            }]
+        });
+
+        console.log(`Found ${count} products`);
+
+        return {
+            data: rows,
+            pagination: {
+                total: count,
+                page,
+                limit,
+                totalPages: Math.ceil(count / limit)
             }
-        }]
-    });
-
-    return {
-        data: rows,
-        pagination: {
-            total: count,
-            page, limit, totalPages: Math.ceil(count / limit)
-        }
+        };
+    } catch (error) {
+        console.error("Database error details:", error);
+        throw error;
     }
 };
 
