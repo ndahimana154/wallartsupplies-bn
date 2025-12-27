@@ -4,7 +4,6 @@ import { ExtendedRequest } from "../types/Request";
 import { sendError, sendSuccess } from "../helpers/apiResponse";
 import productRepositories from "../repositories/productRepositories";
 
-// Init Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({
   model: "gemini-2.5-flash",

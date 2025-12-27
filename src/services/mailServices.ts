@@ -9,7 +9,6 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-// Verify transporter configuration on startup to catch auth/connectivity issues early
 transporter.verify()
     .then(() => console.log("✅ Mail transporter is ready"))
     .catch((err) => console.error("❌ Mail transporter verification failed:", err));
