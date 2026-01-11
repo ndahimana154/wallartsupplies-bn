@@ -47,7 +47,7 @@ const findHeroAds = async (filters: HeroAdsFilters = {}, queries: QueryOptions =
     };
 }
 
-const findHeroAdByAttribute = async (key: string, value: string) => {
+const findHeroAdByAttribute = async (key: string, value: any) => {
     const ad = await HeroAds.findOne({
         where: {
             [key]: value

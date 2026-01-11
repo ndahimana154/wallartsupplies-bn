@@ -54,7 +54,7 @@ const findAllInquiries = async (filters: InquiriesFilters = {}, queries: QueryOp
     };
 };
 
-const updateInquiriesStatus = async (id: string, status: string) => {
+const updateInquiriesStatus = async (id: any, status: string) => {
     const inquiry = await CustomInquiries.findByPk(id);
     if (!inquiry) {
         throw new Error("Inquiry not found");

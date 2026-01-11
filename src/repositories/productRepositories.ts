@@ -10,7 +10,7 @@ const saveProduct = async (data: ProductsAttributes) => {
     return product
 }
 
-const findProductByAttribute = async (key: string, value: string) => {
+const findProductByAttribute = async (key: string, value: any) => {
     const product = await Products.findOne({
         where: {
             [key]: value
@@ -95,7 +95,7 @@ const findCustomerProducts = async (filters: ProductFilters = {}, queries: Query
     }
 };
 
-const customerFindSingleProductByAttribute = async (key: string, value: string, meta: { userId?: number | null; ip?: string | null } = {}) => {
+const customerFindSingleProductByAttribute = async (key: string, value: any, meta: { userId?: number | null; ip?: string | null } = {}) => {
     const product = await Products.findOne({
         where: {
             [key]: value,
@@ -183,7 +183,7 @@ const customerFindSingleProductByAttribute = async (key: string, value: string, 
     };
 };
 
-const findCategoriesByAttribute = async (key: string, value: string) => {
+const findCategoriesByAttribute = async (key: string, value: any) => {
     const category = await Categories.findOne({
         where: {
             [key]: value
