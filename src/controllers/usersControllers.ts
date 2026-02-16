@@ -46,9 +46,7 @@ const forgotPassword = async (req: ExtendedRequest, res: Response): Promise<any>
     try {
         const token = await generateToken(String(req?.user?.email));
         const session = await userRepositories.saveSession({ userId: Number(req?.user?.id), token });
-        console.log("Token", token, "Session", session)
-        console.log("Request", req.body)
-        console.log("user", req.user)
+
         await authEmails.sendForgotPasswordEmail(String(req?.user?.email), Number(req?.user?.id), token)
 
         return sendSuccess(res, "We have sent the next steps to your email inbox", 200);
@@ -61,7 +59,6 @@ const verifyResetPasswordToken = async (req: ExtendedRequest, res: Response): Pr
     try {
         const session = await userRepositories.findSessionBy2Attribute("userId", req.body.userId, "token", req.body.token);
         const isToken = await verifyToken(req.body.token)
-        // console.log("session", session)
 
         if (!session || !isToken) {
             return sendError(res, "Invalid or expired token");

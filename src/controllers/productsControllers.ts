@@ -74,7 +74,6 @@ const getRecentCollections = async (req: ExtendedRequest, res: Response): Promis
         }
 
         const products = await productRepositories.findCustomerProducts(filters, queries);
-        console.log("PP", products)
         return sendSuccess(res, "Products retrieved successfully", products);
     } catch (error: any) {
         console.error('Error in getRecentCollections:', error);
@@ -171,7 +170,6 @@ const updateCategory = async (req: ExtendedRequest, res: Response): Promise<any>
 
 const updateProduct = async (req: ExtendedRequest, res: Response): Promise<any> => {
     try {
-        console.log('Updating product with ID:', req?.product?.id);
         const updated = await productRepositories.updateProduct(Number(req?.product?.id), req.body)
         return sendSuccess(res, "Product updated successfully", updated)
 

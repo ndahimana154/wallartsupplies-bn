@@ -48,7 +48,7 @@ export const isCategoryExists = async (req: ExtendedRequest, res: Response, next
 export const isProductExistsById = async (req: ExtendedRequest, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { id } = req.params
-        console.log("Checking existence for product ID:", id);
+
         const product = await productRepositories.findProductByAttribute("id", id);
 
         if (!product) {

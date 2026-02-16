@@ -37,9 +37,6 @@ const findCustomerProducts = async (filters: ProductFilters = {}, queries: Query
     const { status = true, categoryId, search } = filters;
     const { page = 1, limit = 10, sortBy = "createdAt", order = "DESC" } = queries;
 
-    console.log("Search parameter:", search);
-    console.log("Filters:", filters);
-
     const where: any = {};
 
     if (status) {
@@ -59,8 +56,6 @@ const findCustomerProducts = async (filters: ProductFilters = {}, queries: Query
         ];
     }
 
-    console.log("WHERE clause:", JSON.stringify(where, null, 2));
-
     const offset = (page - 1) * limit;
 
     try {
@@ -77,8 +72,6 @@ const findCustomerProducts = async (filters: ProductFilters = {}, queries: Query
                 }
             }]
         });
-
-        console.log(`Found ${count} products`);
 
         return {
             data: rows,

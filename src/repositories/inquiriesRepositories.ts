@@ -33,7 +33,6 @@ const findAllInquiries = async (filters: InquiriesFilters = {}, queries: QueryOp
 
     const where = orConditions.length > 0 ? { [Op.or]: orConditions } : {};
 
-    console.log(where);
     const offset = (page - 1) * limit;
 
     const { count, rows } = await CustomInquiries.findAndCountAll({
