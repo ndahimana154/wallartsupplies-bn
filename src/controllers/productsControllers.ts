@@ -127,22 +127,6 @@ const getCategories = async (req: ExtendedRequest, res: Response): Promise<any> 
     }
 }
 
-const customerGetBestCategories = async (req: ExtendedRequest, res: Response): Promise<any> => {
-    try {
-        const categories = await productRepositories.findCategories(
-            {
-                name: ''
-            },
-            {
-                sortBy: "updatedAt",
-                order: "DESC",
-            });
-        return sendSuccess(res, "Categories retrieved successfully", categories)
-    } catch (error: any) {
-        return sendError(res, error.message);
-    }
-}
-
 const customerGetProductsByCategory = async (req: ExtendedRequest, res: Response): Promise<any> => {
     try {
         const category = await productRepositories.findCategoriesByAttribute("slug", req.params.slug);
@@ -290,7 +274,6 @@ export default {
     getProductsList,
     getRecentCollections,
     customerGetSingleProduct,
-    customerGetBestCategories,
     customerGetProductsByCategory,
     updateCategory,
     updateProduct,
