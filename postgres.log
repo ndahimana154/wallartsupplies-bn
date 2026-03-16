@@ -1,0 +1,2 @@
+2026-03-16 11:12:42.476 CAT [2173] FATAL:  lock file "postmaster.pid" already exists
+2026-03-16 11:12:42.476 CAT [2173] HINT:  Is another postmaster (PID 1840) running in data directory "/usr/local/var/postgresql@14"?
