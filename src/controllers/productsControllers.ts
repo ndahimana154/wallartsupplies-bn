@@ -136,7 +136,6 @@ const customerGetBestCategories = async (req: ExtendedRequest, res: Response): P
             {
                 sortBy: "updatedAt",
                 order: "DESC",
-
             });
         return sendSuccess(res, "Categories retrieved successfully", categories)
     } catch (error: any) {
