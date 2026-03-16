@@ -113,7 +113,7 @@ const getCategories = async (req: ExtendedRequest, res: Response): Promise<any> 
 
         const queries: QueryOptions = {
             page: parseInt(page as string) || 1,
-            limit: parseInt(limit as string) || 10,
+            limit: limit ? parseInt(limit as string) : undefined,
             sortBy: (sortBy as string) || 'updatedAt',
             order: (order as 'ASC' | 'DESC') || 'DESC'
         };

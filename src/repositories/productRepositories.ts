@@ -193,7 +193,7 @@ const saveCategory = async (data: CategoriesAttributes) => {
 
 const findCategories = async (filters: CategoryFilters = {}, queries: QueryOptions = {}) => {
     const { name } = filters;
-    const { page = 1, limit = 10, sortBy = "createdAt", order = "DESC" } = queries;
+    const { page = 1, limit, sortBy = "createdAt", order = "DESC" } = queries;
 
     const where: any = {};
 
@@ -201,22 +201,25 @@ const findCategories = async (filters: CategoryFilters = {}, queries: QueryOptio
         where.name = { [Op.like]: `%${name}%` };
     }
 
-    const offset = (page - 1) * limit;
-
-    const { count, rows } = await Categories.findAndCountAll({
+    const options: any = {
         where,
-        limit,
-        offset,
         order: [[sortBy, order]],
-    });
+    };
+
+    if (limit) {
+        options.limit = limit;
+        options.offset = (page - 1) * limit;
+    }
+
+    const { count, rows } = await Categories.findAndCountAll(options);
 
     return {
         data: rows,
         pagination: {
             total: count,
             page,
-            limit,
-            totalPages: Math.ceil(count / limit),
+            limit: limit || count,
+            totalPages: limit ? Math.ceil(count / limit) : 1,
         },
     };
 };
