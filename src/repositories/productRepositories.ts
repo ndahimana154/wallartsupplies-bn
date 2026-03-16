@@ -207,12 +207,16 @@ const findCategories = async (filters: CategoryFilters = {}, queries: QueryOptio
     };
 
     if (limit) {
+        console.log("Applying pagination with limit:", limit, "and page:", page);
         options.limit = limit;
         options.offset = (page - 1) * limit;
+    } else {
+        console.log("No pagination applied, fetching all categories");
     }
 
     const { count, rows } = await Categories.findAndCountAll(options);
 
+    console.log("Categories found:", rows.length, "Total count:", count, "Page:", page, "Limit:", limit, "data", rows);
     return {
         data: rows,
         pagination: {
