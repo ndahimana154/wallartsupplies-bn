@@ -17,7 +17,7 @@ productsRoutes.put("/category/update/:id", isUserAuthorized, bodyValidation(upda
 
 productsRoutes.get("/customer-get-recent-collections", productsControllers.getRecentCollections);
 productsRoutes.get("/customer-get-product/:slug", productsControllers.customerGetSingleProduct);
-productsRoutes.get("/customer-get-best-categories", productsControllers.customerGetBestCategories)
+productsRoutes.get("/customer-get-best-categories", productsControllers.getCategories)
 productsRoutes.get("/category/customer-get-products/:slug", productsControllers.customerGetProductsByCategory)
 
 productsRoutes.get("/get-dashboard-data", productsControllers.getDashboardData);
