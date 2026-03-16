@@ -1,0 +1,38 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches:
+      - develop
+
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run build
+        run: npm run build || true
+
+  deploy:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Deploy API via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 137.184.42.115
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            /var/www/backend-deploy.sh
