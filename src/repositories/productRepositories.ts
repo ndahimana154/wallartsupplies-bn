@@ -193,7 +193,7 @@ const saveCategory = async (data: CategoriesAttributes) => {
 
 const findCategories = async (filters: CategoryFilters = {}, queries: QueryOptions = {}) => {
     const { name } = filters;
-    const { sortBy = "createdAt", order = "DESC" } = queries;
+    const { page = 1, limit, sortBy = "createdAt", order = "DESC" } = queries;
 
     const where: any = {};
 
@@ -206,11 +206,25 @@ const findCategories = async (filters: CategoryFilters = {}, queries: QueryOptio
         order: [[sortBy, order]],
     };
 
+    // Apply pagination only if limit is provided
+    if (limit && limit > 0) {
+        const offset = (page - 1) * limit;
+        options.limit = limit;
+        options.offset = offset;
+    }
+
     const { count, rows } = await Categories.findAndCountAll(options);
 
-    console.log("Categories found:", rows.length, "Total count:", count, "Page:", rows);
+    console.log("Categories found:", rows.length, "Total count:", count, "Page:", page, "Limit:", limit);
+    
     return {
         data: rows,
+        pagination: limit ? {
+            total: count,
+            page,
+            limit,
+            totalPages: Math.ceil(count / limit)
+        } : undefined
     }
 };
 
